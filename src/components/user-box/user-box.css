@@ -1,0 +1,14 @@
+.user-box {
+	display: flex;
+	flex-direction: column;
+}
+
+.profile-info {
+	padding: 12px;
+}
+
+.profile-details {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 8px;
+}
