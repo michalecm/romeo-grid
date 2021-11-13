@@ -1,19 +1,32 @@
-import { React, useState, useEffect } from 'react';
-import { IdentityService } from '../../services/identity-service';
+import { React, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addUsers } from '../../store/actions/userGridActions';
+import UserBox from '../user-box/user-box';
+import '../user-grid/user-grid.css';
 
-export default function UserGrid(users = []) {
-	const [myData, setMyData] = useState();
-
+export default function UserGrid() {
+	const users = useSelector((state) => state.userGridReducer.users);
+	const dispatch = useDispatch();
 	useEffect(() => {
-		async function fetchData() {
-			let x = await IdentityService.getUser();
-			setMyData(x);
-		}
-		if (myData === undefined) {
-			fetchData();
-		}
-		console.log(myData);
-	}, [myData]);
+		dispatch(addUsers(30));
+	}, [dispatch]);
 
-	return <div className='grid'>{JSON.stringify(myData)}</div>;
+	const userBoxes = users
+		.map((user, i) => <UserBox key={i} user={user}></UserBox>)
+		.sort((x, y) => {
+			return x.props.user.distance > y.props.user.distance
+				? 1
+				: x.props.user.distance < y.props.user.distance
+				? -1
+				: 1;
+		})
+		.sort((x, y) => {
+			return x.props.user.online === y.props.user.online
+				? 0
+				: x.props.user.online
+				? -1
+				: 1;
+		});
+
+	return <div className='grid'>{userBoxes}</div>;
 }

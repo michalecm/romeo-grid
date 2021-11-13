@@ -1,25 +1,24 @@
 import axios from 'axios';
 
 export class IdentityService {
-	static getUser() {
+	static getUser(number) {
+		let apireq = 'https://randomuser.me/api/?results='
+			.concat(`${number}`)
+			.concat('&gender=male');
 		return axios({
 			method: 'get',
-			url: 'https://randomuser.me/api/',
+			url: apireq,
 			responseType: 'json',
 		})
-			.then((response) => response.data.results[0])
+			.then((response) => response.data.results)
 			.then((results) => {
-				console.log(results.registered.age);
-				return {
-					name: results.login.username,
-					age:
-						parseInt(results.registered.age) >= 18
-							? results.registered.age
-							: 18,
-					picture: results.picture.medium,
+				return results.map((res) => ({
+					name: res.login.username,
+					age: parseInt(res.dob.age) >= 18 ? res.dob.age : 18,
+					picture: res.picture.large,
 					online: Math.random() < 0.24,
 					distance: Math.random() * 10000,
-				};
+				}));
 			});
 	}
 }
